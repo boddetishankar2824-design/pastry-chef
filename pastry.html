@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PastryChef — Artisan Bakery & Patisserie</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+<style>
+:root{
+  --cream:#faf6f0;--warm:#f2e9dc;
+  --gold:#c8a96e;--gold-lt:#e8d5b0;
+  --brown:#3b2a1a;--mocha:#7a5c3e;
+  --rose:#d4876a;--rose-lt:#f0c4b0;
+  --text:#2d1f12;--muted:#8a7060;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+img{max-width:100%;display:block;}
+.page{display:none;}
+.page.active{display:block;}
+
+@keyframes shimmerSlide{0%{transform:translateX(-100%) skewX(-15deg)}100%{transform:translateX(250%) skewX(-15deg)}}
+@keyframes rotateSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes floatUp{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:.8}90%{opacity:.3}100%{transform:translateY(-20vh) scale(1.4);opacity:0}}
+@keyframes scrollAnim{0%,100%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1)}}
+@keyframes unrollScroll{0%{clip-path:inset(0 0 100% 0);transform:scaleY(0.04);}35%{clip-path:inset(0 0 65% 0);transform:scaleY(.5);}100%{clip-path:inset(0 0 0% 0);transform:scaleY(1);}}
+@keyframes pFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes goldSheen{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes orbPulse{0%,100%{transform:scale(1);opacity:.25}50%{transform:scale(1.3);opacity:.08}}
+@keyframes marqueeMove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes heartbeat{0%,100%{transform:scale(1)}14%{transform:scale(1.1)}28%{transform:scale(1)}42%{transform:scale(1.1)}70%{transform:scale(1)}}
+@keyframes slideDown{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes waveMove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes morphBg{0%{border-radius:60% 40% 70% 30%/30% 60% 40% 70%}50%{border-radius:30% 70% 40% 60%/50% 40% 60% 50%}100%{border-radius:60% 40% 70% 30%/30% 60% 40% 70%}}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.08);opacity:1}}
+@keyframes borderGlow{0%,100%{border-color:rgba(200,169,110,.25)}50%{border-color:rgba(200,169,110,.7)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,169,110,.4)}50%{box-shadow:0 0 0 14px rgba(200,169,110,0)}}
+@keyframes ingredientFloat{0%,100%{transform:translateY(0) rotate(0deg)}33%{transform:translateY(-12px) rotate(3deg)}66%{transform:translateY(-6px) rotate(-2deg)}}
+@keyframes goldenRing{0%,100%{box-shadow:0 0 0 0 rgba(200,169,110,.5),0 0 0 4px rgba(200,169,110,.1)}50%{box-shadow:0 0 0 8px rgba(200,169,110,0),0 0 0 12px rgba(200,169,110,0)}}
+@keyframes bounceIn{0%{transform:scale(0.3);opacity:0}50%{transform:scale(1.05)}70%{transform:scale(0.95)}100%{transform:scale(1);opacity:1}}
+@keyframes scanLine{0%{top:-100%}100%{top:100%}}
+@keyframes magneticFloat{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-8px) rotate(1deg)}75%{transform:translateY(-4px) rotate(-1deg)}}
+@keyframes ripple{0%{transform:scale(0);opacity:.4}100%{transform:scale(4);opacity:0}}
+@keyframes glitterPop{0%{transform:scale(0) rotate(0deg);opacity:0}60%{opacity:1}100%{transform:scale(1.5) rotate(720deg);opacity:0}}
+@keyframes stampDrop{0%{transform:scale(2.5) rotate(-8deg);opacity:0}70%{transform:scale(.95) rotate(1deg);opacity:1}85%{transform:scale(1.03) rotate(0deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
+
+.gsap-hero-char{display:inline-block;will-change:transform,opacity;}
+.gsap-will{will-change:transform,opacity;}
+
+/* ═══════ NAV ═══════ */
+nav{
+  display:flex;align-items:center;
+  padding:14px 20px;
+  background:rgba(250,246,240,.96);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(200,169,110,.2);
+  position:sticky;top:0;z-index:200;
+  transition:padding .4s,box-shadow .4s,background .4s;
+  gap:16px;
+  animation:slideDown .6s ease both;
+}
+nav.scrolled{padding:10px 20px;box-shadow:0 4px 30px rgba(59,42,26,.1);background:rgba(250,246,240,.99);}
+.nav-left{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.nav-logo-img{height:42px;width:auto;cursor:pointer;transition:transform .5s cubic-bezier(.34,1.56,.64,1),filter .3s;flex-shrink:0;}
+.nav-logo-img:hover{transform:scale(1.14) rotate(-4deg);filter:drop-shadow(0 4px 12px rgba(200,169,110,.4));}
+.logo{font-family:'Great Vibes',cursive;font-size:clamp(22px,4vw,40px);color:var(--brown);line-height:1;letter-spacing:1px;cursor:pointer;white-space:nowrap;transition:color .3s,text-shadow .3s;}
+.logo span{color:var(--gold);}
+.logo:hover{color:var(--gold);text-shadow:0 0 30px rgba(200,169,110,.3);}
+
+/* ── NAV LINKS – desktop ── */
+.nav-links{display:flex;gap:22px;list-style:none;align-items:center;margin-left:auto;}
+.nav-links a{
+  text-decoration:none;color:var(--mocha);
+  font-size:clamp(10px,1.1vw,12px);font-weight:500;
+  letter-spacing:1.5px;text-transform:uppercase;
+  position:relative;padding-bottom:4px;
+  transition:color .3s;cursor:pointer;white-space:nowrap;
+}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1.5px;background:linear-gradient(to right,var(--gold),var(--rose));transition:width .4s cubic-bezier(.34,1.56,.64,1);}
+.nav-links a:hover{color:var(--brown);}
+.nav-links a:hover::after{width:100%;}
+
+/* ── HAMBURGER ── */
+.hamburger{
+  display:none;flex-direction:column;justify-content:center;gap:5px;
+  cursor:pointer;background:none;border:none;padding:8px;z-index:310;
+  flex-shrink:0;margin-left:auto;
+  width:40px;height:40px;align-items:center;
+}
+.hamburger span{display:block;width:22px;height:2px;background:var(--brown);border-radius:2px;transition:.35s cubic-bezier(.34,1.56,.64,1);}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+.hamburger.open span:nth-child(2){opacity:0;transform:translateX(8px);}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+
+/* ── DRAWER CLOSE ── */
+.drawer-close{display:none;}
+
+/* ── BACKDROP ── */
+.nav-backdrop{display:none;position:fixed;inset:0;background:rgba(59,42,26,.52);z-index:270;opacity:0;transition:opacity .35s ease;}
+.nav-backdrop.visible{display:block;}
+.nav-backdrop.open{opacity:1;}
+
+/* ── MOBILE OVERRIDES ── */
+@media(max-width:768px){
+  .hamburger{display:flex;}
+
+  /* Hide desktop links; shown as drawer */
+  .nav-links{
+    position:fixed;
+    top:0;right:0;bottom:0;
+    width:min(75vw,300px);
+    background:var(--cream);
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:flex-start;
+    gap:0;
+    padding:64px 0 50px;
+    transform:translateX(100%);
+    transition:transform .4s cubic-bezier(.4,0,.2,1);
+    z-index:280;
+    margin-left:0;
+    box-shadow:-8px 0 36px rgba(59,42,26,.18);
+    overflow-y:auto;
+  }
+  .nav-links.open{transform:translateX(0);}
+
+  .nav-links li{
+    width:100%;
+    border-bottom:1px solid rgba(200,169,110,.18);
+  }
+  .nav-links li:last-child{border-bottom:none;}
+
+  .nav-links a{
+    display:flex;
+    align-items:center;
+    padding:15px 24px;
+    font-size:14px;
+    letter-spacing:2px;
+    color:var(--brown);
+    width:100%;
+  }
+  .nav-links a::after{display:none;}
+  .nav-links a::before{
+    content:'';
+    display:block;
+    width:0;height:2px;
+    background:linear-gradient(to right,var(--gold),var(--rose));
+    margin-right:0;
+    transition:width .3s ease, margin-right .3s ease;
+    flex-shrink:0;
+  }
+  .nav-links a:hover::before,.nav-links a:focus::before{width:16px;margin-right:10px;}
+
+  .drawer-close{
+    display:flex !important;
+    position:absolute;
+    top:14px;right:14px;
+    background:none;
+    border:1px solid var(--gold-lt);
+    color:var(--mocha);
+    width:36px;height:36px;
+    border-radius:50%;
+    align-items:center;justify-content:center;
+    font-size:16px;
+    cursor:pointer;
+    transition:all .3s cubic-bezier(.34,1.56,.64,1);
+    z-index:290;
+  }
+  .drawer-close:hover{background:var(--gold);color:var(--brown);transform:rotate(90deg);}
+
+  /* Nav logo slightly smaller on mobile */
+  .nav-logo-img{height:36px;}
+  .logo{font-size:clamp(20px,5vw,28px);}
+}
+
+/* ═══════ BUTTONS ═══════ */
+.btn-primary{
+  padding:13px 30px;background:var(--gold);color:var(--brown);
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:500;
+  border:none;cursor:pointer;border-radius:30px;
+  transition:all .4s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+}
+.btn-primary::before{content:'';position:absolute;inset:0;background:var(--rose);transform:scaleX(0);transform-origin:left;transition:transform .4s ease;border-radius:30px;z-index:0;}
+.btn-primary::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);transform:skewX(-20deg);transition:left .5s ease;z-index:1;}
+.btn-primary:hover::after{left:150%;}
+.btn-primary span,.btn-primary{position:relative;z-index:1;}
+.btn-primary:hover{color:#fff;transform:translateY(-4px) scale(1.03);box-shadow:0 14px 36px rgba(200,169,110,.45);}
+.btn-primary:hover::before{transform:scaleX(1);}
+.btn-primary:active{transform:translateY(-1px) scale(.99);}
+.btn-outline{padding:13px 30px;background:transparent;color:#fff;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:500;border:1px solid rgba(255,255,255,.5);cursor:pointer;border-radius:30px;transition:all .4s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;}
+.btn-outline::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.1);transform:scale(0);border-radius:30px;transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
+.btn-outline:hover{border-color:#fff;transform:translateY(-3px);}
+.btn-outline:hover::before{transform:scale(1);}
+
+/* ═══════ RIPPLE ═══════ */
+.ripple-btn{position:relative;overflow:hidden;}
+.ripple-wave{position:absolute;border-radius:50%;background:rgba(255,255,255,.35);animation:ripple .65s linear;pointer-events:none;}
+
+/* ═══════ HERO ═══════ */
+.hero{position:relative;height:100svh;min-height:500px;overflow:hidden;}
+.slide{position:absolute;inset:0;background-size:cover;background-position:center;display:flex;align-items:center;opacity:0;transition:opacity 1.8s ease;}
+.slide.active{opacity:1;z-index:2;}
+.slide-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(59,42,26,.85) 0%,rgba(59,42,26,.35) 55%,transparent 100%);}
+.slide.active .slide-bg{animation:kenBurns 8s ease-in-out forwards;}
+@keyframes kenBurns{0%{transform:scale(1)}100%{transform:scale(1.09)}}
+.slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;will-change:transform;}
+.slide-content{position:relative;z-index:3;padding:0 6%;max-width:min(640px,90vw);}
+.slide-tag{
+  display:inline-block;font-size:10px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--gold-lt);border:1px solid var(--gold);border-radius:30px;padding:6px 16px;margin-bottom:22px;
+  opacity:0;transform:translateY(20px) scale(.9);
+  transition:opacity .8s .3s,transform .8s .3s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+}
+.slide-tag::before{content:'';position:absolute;inset:0;background:rgba(200,169,110,.08);transform:scaleX(0);transform-origin:left;transition:transform 1.2s .5s ease;}
+.slide.active .slide-tag{opacity:1;transform:translateY(0) scale(1);}
+.slide.active .slide-tag::before{transform:scaleX(1);}
+.slide-content h1{
+  font-family:'Cormorant Garamond',serif;font-size:clamp(32px,7vw,86px);
+  font-weight:300;line-height:1.06;color:#fff;margin-bottom:18px;
+  opacity:0;transform:translateY(30px);
+  transition:opacity 1s .55s,transform 1s .55s cubic-bezier(.22,1,.36,1);
+}
+.slide.active .slide-content h1{opacity:1;transform:translateY(0);}
+.slide-content p{
+  font-size:clamp(13px,2vw,16px);color:rgba(255,255,255,.78);line-height:1.8;margin-bottom:30px;
+  opacity:0;transform:translateY(20px);
+  transition:opacity .8s .75s,transform .8s .75s cubic-bezier(.22,1,.36,1);
+}
+.slide.active .slide-content p{opacity:1;transform:translateY(0);}
+.slide-btns{
+  display:flex;gap:12px;flex-wrap:wrap;
+  opacity:0;transform:translateY(20px);
+  transition:opacity .8s .95s,transform .8s .95s cubic-bezier(.34,1.56,.64,1);
+}
+.slide.active .slide-btns{opacity:1;transform:translateY(0);}
+.hero-badge{
+  position:absolute;bottom:100px;right:5%;z-index:10;
+  background:rgba(250,246,240,.12);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(200,169,110,.5);border-radius:16px;
+  padding:14px 18px;text-align:center;
+  animation:magneticFloat 4s ease-in-out infinite;
+  opacity:0;transition:opacity 1.2s 1.5s;
+}
+.hero-badge.show{opacity:1;}
+.hero-badge-num{
+  font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);font-weight:300;line-height:1;
+  background:linear-gradient(135deg,var(--gold),var(--rose),var(--gold));background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:goldSheen 3s linear infinite;
+}
+.hero-badge-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-top:4px;}
+@media(max-width:600px){.hero-badge{display:none;}}
+.slider-controls{position:absolute;bottom:32px;left:6%;z-index:10;display:flex;gap:10px;align-items:center;}
+.dot{width:26px;height:2px;background:rgba(255,255,255,.35);cursor:pointer;transition:all .5s cubic-bezier(.34,1.56,.64,1);border-radius:2px;position:relative;overflow:hidden;}
+.dot::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,var(--gold),var(--rose));transform:scaleX(0);transform-origin:left;transition:transform .5s ease;}
+.dot.active{width:52px;}
+.dot.active::after{transform:scaleX(1);}
+.slider-arrow{position:absolute;top:50%;right:4%;z-index:10;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;}
+.arrow-btn{width:46px;height:46px;border:1px solid rgba(255,255,255,.4);border-radius:50%;background:transparent;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .4s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;}
+.arrow-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:scale(0);border-radius:50%;transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
+.arrow-btn:hover{border-color:var(--gold);color:var(--brown);transform:scale(1.12);}
+.arrow-btn:hover::before{transform:scale(1);}
+.arrow-btn span{position:relative;z-index:1;}
+.scroll-hint{position:absolute;bottom:32px;right:5.5%;z-index:10;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.scroll-hint span{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.45);writing-mode:vertical-rl;}
+.scroll-line{width:1px;height:52px;background:linear-gradient(to bottom,rgba(255,255,255,.5),transparent);animation:scrollAnim 2s infinite;}
+.particles{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+.particle{position:absolute;border-radius:50%;background:rgba(200,169,110,.55);animation:floatUp linear infinite;}
+@media(max-width:600px){.slider-arrow,.scroll-hint{display:none;}}
+
+/* ═══════ WAVE DIVIDER ═══════ */
+.wave-divider{position:relative;overflow:hidden;height:60px;margin-top:-1px;}
+.wave-divider svg{position:absolute;bottom:0;width:200%;animation:waveMove 8s linear infinite;}
+
+/* ═══════ WELCOME ═══════ */
+.welcome{
+  padding:clamp(50px,7vw,100px) clamp(20px,5vw,6%);
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(30px,5vw,80px);align-items:center;
+  background:#fff;position:relative;overflow:hidden;
+}
+.welcome::before{
+  content:'';position:absolute;top:-80px;right:-80px;width:380px;height:380px;
+  background:radial-gradient(circle,rgba(200,169,110,.1) 0%,transparent 70%);
+  border-radius:60% 40% 70% 30%/30% 60% 40% 70%;
+  animation:morphBg 12s ease-in-out infinite,breathe 6s ease-in-out infinite;
+  pointer-events:none;
+}
+.welcome::after{
+  content:'';position:absolute;bottom:-60px;left:-60px;width:280px;height:280px;
+  background:radial-gradient(circle,rgba(212,135,106,.07) 0%,transparent 70%);
+  border-radius:40% 60% 30% 70%/60% 30% 70% 40%;
+  animation:morphBg 15s ease-in-out infinite reverse;
+  pointer-events:none;
+}
+@media(max-width:780px){.welcome{grid-template-columns:1fr;gap:clamp(30px,5vw,50px);}}
+.eyebrow{
+  font-size:10px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--gold);display:block;margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.eyebrow::before{content:'';display:inline-block;width:20px;height:1px;background:var(--gold);vertical-align:middle;margin-right:10px;}
+.welcome-text h2{
+  font-family:'Cormorant Garamond',serif;font-size:clamp(26px,3.5vw,52px);
+  font-weight:300;line-height:1.15;color:var(--brown);margin-bottom:20px;
+}
+.welcome-text h2 em{font-style:italic;color:var(--rose);}
+.welcome-text p{font-size:clamp(13px,1.5vw,15px);line-height:1.95;color:var(--muted);margin-bottom:14px;}
+.signature{font-family:'Great Vibes',cursive;font-size:clamp(22px,4vw,40px);color:var(--gold);margin-top:22px;display:inline-block;animation:heartbeat 3s ease-in-out infinite;}
+.welcome-images{display:grid;grid-template-columns:1fr 1fr;gap:12px;perspective:1000px;}
+.wi{border-radius:12px;overflow:hidden;aspect-ratio:1/1;position:relative;transition:transform .5s cubic-bezier(.34,1.56,.64,1),box-shadow .5s ease;}
+.wi:first-child{grid-row:span 2;aspect-ratio:auto;}
+.wi img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.25,.46,.45,.94);}
+.wi:hover img{transform:scale(1.1);}
+.wi:hover{transform:translateY(-6px) scale(1.01);box-shadow:0 20px 50px rgba(59,42,26,.18);}
+.wi::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(59,42,26,.2));opacity:0;transition:opacity .4s;border-radius:12px;}
+.wi:hover::after{opacity:1;}
+.wi::before{content:'';position:absolute;inset:0;z-index:2;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%);transform:translateX(-100%) skewX(-10deg);transition:none;pointer-events:none;}
+.wi:hover::before{animation:shimmerSlide .65s ease forwards;}
+
+/* ═══════ STATS ═══════ */
+.stats-bar{
+  background:var(--brown);
+  padding:clamp(35px,5vw,65px) clamp(20px,5vw,6%);
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:clamp(15px,3vw,20px);text-align:center;
+  position:relative;overflow:hidden;
+}
+.stats-bar::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 20% 50%,rgba(200,169,110,.12),transparent 60%),
+              radial-gradient(ellipse at 80% 50%,rgba(200,169,110,.08),transparent 60%);
+  animation:breathe 6s ease-in-out infinite;
+}
+.stats-bar::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,var(--gold),var(--rose),var(--gold),transparent);animation:goldSheen 3s linear infinite;background-size:200% auto;}
+@media(max-width:680px){.stats-bar{grid-template-columns:repeat(2,1fr);gap:clamp(25px,4vw,35px);}}
+.stat-item{position:relative;cursor:default;}
+.stat-item::before{content:'';position:absolute;inset:0;border-radius:12px;background:rgba(200,169,110,.04);transform:scale(.8);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);}
+.stat-item:hover::before{transform:scale(1);opacity:1;}
+.stat-num{
+  font-family:'Cormorant Garamond',serif;font-size:clamp(36px,6vw,62px);font-weight:300;color:var(--gold);line-height:1;
+  display:inline-block;
+  background:linear-gradient(135deg,var(--gold),var(--rose),var(--gold));background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.stat-item:hover .stat-num{transform:scale(1.08);animation:goldSheen 1.5s linear infinite;}
+.stat-divider{width:30px;height:1px;background:rgba(200,169,110,.3);margin:10px auto;transition:width .4s ease;}
+.stat-item:hover .stat-divider{width:50px;background:var(--gold);}
+.stat-label{font-size:clamp(9px,1.2vw,10px);letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.45);transition:color .3s;}
+.stat-item:hover .stat-label{color:rgba(255,255,255,.7);}
+
+/* ═══════ BESTSELLERS ═══════ */
+.bestsellers{padding:clamp(44px,7vw,110px) clamp(16px,5vw,6%);background:var(--cream);position:relative;overflow:hidden;}
+.bestsellers::after{content:'✦';position:absolute;top:40px;right:-20px;font-size:180px;color:rgba(200,169,110,.04);font-family:'Cormorant Garamond',serif;pointer-events:none;animation:rotateSlow 40s linear infinite;}
+.ingredient-float{position:absolute;font-size:22px;opacity:.08;pointer-events:none;animation:ingredientFloat ease-in-out infinite;}
+.section-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:clamp(24px,4vw,56px);flex-wrap:wrap;gap:12px;}
+.section-header-text h2{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4.5vw,56px);font-weight:300;color:var(--brown);}
+.view-all{font-size:clamp(9px,1vw,11px);letter-spacing:2px;text-transform:uppercase;color:var(--mocha);text-decoration:none;border-bottom:1px solid var(--gold-lt);padding-bottom:3px;transition:all .35s cubic-bezier(.22,1,.36,1);cursor:pointer;white-space:nowrap;position:relative;}
+.view-all::after{content:'';position:absolute;bottom:-1px;left:0;width:0;height:1px;background:var(--gold);transition:width .35s ease;}
+.view-all:hover{color:var(--gold);border-color:transparent;letter-spacing:3px;}
+.view-all:hover::after{width:100%;}
+.bs-grid{display:grid;grid-template-columns:1fr;gap:16px;}
+@media(min-width:560px){.bs-grid{grid-template-columns:repeat(2,1fr);gap:20px;}}
+@media(min-width:900px){.bs-grid{grid-template-columns:repeat(3,1fr);gap:24px;}}
+.bs-card{
+  background:#fff;border-radius:20px;overflow:hidden;cursor:pointer;
+  display:flex;flex-direction:column;
+  box-shadow:0 4px 20px rgba(59,42,26,.07);
+  transition:box-shadow .5s ease,border-color .3s;
+  border:1px solid rgba(200,169,110,.1);
+  position:relative;will-change:transform;
+  transform-style:preserve-3d;
+}
+.bs-card::before{content:'';position:absolute;inset:0;border-radius:20px;background:linear-gradient(135deg,rgba(200,169,110,.08),rgba(212,135,106,.04));opacity:0;transition:opacity .4s;pointer-events:none;z-index:1;}
+.bs-card:hover{box-shadow:0 30px 70px rgba(59,42,26,.2);border-color:rgba(200,169,110,.3);}
+.bs-card:hover::before{opacity:1;}
+.bs-img{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--warm);flex-shrink:0;}
+.bs-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform .8s cubic-bezier(.25,.46,.45,.94);}
+.bs-card:hover .bs-img img{transform:scale(1.12);}
+.bs-img::after{content:'';position:absolute;inset:0;z-index:2;background:linear-gradient(105deg,transparent 25%,rgba(255,255,255,.28) 50%,transparent 75%);transform:translateX(-150%) skewX(-10deg);transition:none;pointer-events:none;}
+.bs-card:hover .bs-img::after{animation:shimmerSlide .7s ease forwards;}
+.bs-badge{position:absolute;top:10px;left:10px;z-index:3;background:var(--gold);color:var(--brown);font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;font-weight:600;border-radius:30px;animation:glowPulse 2.5s ease-in-out infinite;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.bs-card:hover .bs-badge{transform:scale(1.06) translateY(-1px);}
+@media(max-width:559px){
+  .bs-card{flex-direction:row;align-items:stretch;border-radius:16px;min-height:120px;}
+  .bs-img{width:120px;min-width:120px;max-width:120px;aspect-ratio:auto;flex-shrink:0;}
+  .bs-badge{font-size:7px;padding:3px 8px;top:7px;left:7px;}
+}
+.bs-body{padding:clamp(14px,2.5vw,24px);flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2;}
+.bs-body h3{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,2.5vw,23px);font-weight:400;color:var(--brown);margin-bottom:7px;line-height:1.25;transition:color .3s;}
+.bs-card:hover .bs-body h3{color:var(--rose);}
+.bs-body p{font-size:clamp(12px,1.3vw,13px);color:var(--muted);line-height:1.7;}
+.bs-body::before{content:'';display:block;width:0;height:2px;background:linear-gradient(to right,var(--gold),var(--rose));border-radius:2px;margin-bottom:10px;transition:width .5s cubic-bezier(.34,1.56,.64,1);}
+.bs-card:hover .bs-body::before{width:40px;}
+
+/* ═══════ MARQUEE ═══════ */
+.marquee-strip{background:var(--brown);padding:14px 0;overflow:hidden;white-space:nowrap;border-top:1px solid rgba(200,169,110,.15);border-bottom:1px solid rgba(200,169,110,.15);position:relative;}
+.marquee-strip::before,.marquee-strip::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none;}
+.marquee-strip::before{left:0;background:linear-gradient(to right,var(--brown),transparent);}
+.marquee-strip::after{right:0;background:linear-gradient(to left,var(--brown),transparent);}
+.marquee-inner{display:inline-flex;gap:0;animation:marqueeMove 22s linear infinite;}
+.marquee-strip:hover .marquee-inner{animation-play-state:paused;}
+.marquee-item{font-family:'Cormorant Garamond',serif;font-size:clamp(13px,2vw,16px);font-style:italic;color:rgba(255,255,255,.55);padding:0 40px;letter-spacing:1px;transition:color .3s;}
+.marquee-item:hover{color:var(--gold);}
+.marquee-dot{color:var(--gold);font-size:8px;vertical-align:middle;animation:pulse 2s ease-in-out infinite;}
+
+/* ═══════ PROCESS ═══════ */
+.process{padding:clamp(44px,7vw,110px) clamp(20px,5vw,6%);background:#fff;text-align:center;position:relative;overflow:hidden;}
+.process::before{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;border:1px solid rgba(200,169,110,.07);animation:rotateSlow 60s linear infinite;pointer-events:none;}
+.process::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:400px;height:400px;border-radius:50%;border:1px solid rgba(200,169,110,.07);animation:rotateSlow 40s linear infinite reverse;pointer-events:none;}
+.process>h2{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,5vw,56px);font-weight:300;color:var(--brown);margin-bottom:clamp(35px,5vw,65px);}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(18px,3vw,45px);position:relative;}
+@media(max-width:780px){.steps{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:440px){.steps{grid-template-columns:1fr;gap:20px;}}
+.steps::before{content:'';position:absolute;top:36px;left:10%;right:10%;height:1px;background:linear-gradient(to right,transparent,var(--gold-lt),transparent);z-index:0;animation:goldSheen 4s linear infinite;background-size:200% auto;}
+@media(max-width:780px){.steps::before{display:none;}}
+.step{position:relative;z-index:1;}
+.step-num{width:72px;height:72px;border-radius:50%;background:var(--cream);border:1px solid var(--gold-lt);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--gold);transition:all .5s cubic-bezier(.34,1.56,.64,1);position:relative;}
+.step-num::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px dashed rgba(200,169,110,.4);animation:rotateSlow 10s linear infinite;opacity:0;transition:opacity .4s;}
+.step-num::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(200,169,110,.15),transparent);transform:scale(0);transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
+.step:hover .step-num{background:var(--gold);color:var(--brown);transform:scale(1.18) rotate(5deg);box-shadow:0 10px 30px rgba(200,169,110,.35);animation:goldenRing 1.5s ease-in-out infinite;}
+.step:hover .step-num::before{opacity:1;}
+.step:hover .step-num::after{transform:scale(1);}
+.step h4{font-family:'Cormorant Garamond',serif;font-size:clamp(15px,2.2vw,21px);font-weight:400;color:var(--brown);margin-bottom:10px;transition:color .3s;}
+.step:hover h4{color:var(--rose);}
+.step p{font-size:clamp(12px,1.3vw,13px);color:var(--muted);line-height:1.75;}
+.step-progress{height:2px;background:rgba(200,169,110,.15);border-radius:2px;margin-top:14px;overflow:hidden;}
+.step-progress-fill{height:100%;background:linear-gradient(to right,var(--gold),var(--rose));width:0;transition:width .8s ease;}
+.step:hover .step-progress-fill,.step.visible .step-progress-fill{width:var(--target-w,75%);}
+
+/* ═══════ TESTIMONIALS — FIXED ═══════ */
+.testimonials{
+  padding:clamp(44px,7vw,110px) clamp(20px,5vw,6%);
+  background:var(--brown);
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.testimonials::before{
+  content:'❝';
+  position:absolute;left:-30px;top:30px;
+  font-size:250px;color:rgba(200,169,110,.05);
+  font-family:'Cormorant Garamond',serif;line-height:1;
+  pointer-events:none;
+  animation:magneticFloat 8s ease-in-out infinite;
+}
+.testi-orb{position:absolute;border-radius:50%;background:rgba(200,169,110,.06);pointer-events:none;animation:orbPulse 6s ease-in-out infinite;}
+
+/* Eyebrow inside dark section — override gold to be lighter */
+.testimonials .eyebrow{color:var(--gold-lt);}
+.testimonials .eyebrow::before{background:var(--gold-lt);}
+
+.testimonials h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,5vw,56px);
+  font-weight:300;
+  color:#fff;
+  margin-bottom:clamp(28px,4.5vw,65px);
+}
+.testi-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+@media(max-width:780px){.testi-grid{grid-template-columns:1fr 1fr;gap:14px;}}
+@media(max-width:480px){.testi-grid{grid-template-columns:1fr;gap:14px;}}
+
+.testi-card{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(200,169,110,.25);
+  border-radius:16px;
+  padding:clamp(18px,3vw,36px);
+  text-align:left;
+  transition:all .5s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+  overflow:hidden;
+  /* Ensure content is always visible */
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.testi-card::after{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(to right,var(--gold),var(--rose));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .5s ease;
+}
+.testi-card:hover::after{transform:scaleX(1);}
+.testi-card::before{
+  content:'';position:absolute;inset:0;border-radius:16px;
+  background:linear-gradient(135deg,rgba(200,169,110,.1),transparent);
+  opacity:0;transition:opacity .4s;
+}
+.testi-card:hover{
+  background:rgba(255,255,255,.12);
+  border-color:var(--gold);
+  transform:translateY(-8px) scale(1.01);
+}
+.testi-card:hover::before{opacity:1;}
+
+.testi-stars{
+  color:var(--gold);
+  font-size:14px;
+  margin-bottom:14px;
+  letter-spacing:3px;
+  display:block;
+  transition:letter-spacing .4s ease;
+  line-height:1;
+}
+.testi-card:hover .testi-stars{letter-spacing:5px;}
+
+.testi-card blockquote{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(14px,1.8vw,18px);
+  font-style:italic;
+  color:rgba(255,255,255,.88);
+  line-height:1.75;
+  margin:0 0 20px 0;
+  flex:1;
+}
+
+.testi-author{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:auto;
+}
+.testi-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--mocha),var(--brown));
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;color:var(--gold-lt);
+  border:1px solid rgba(200,169,110,.4);
+  transition:all .4s cubic-bezier(.34,1.56,.64,1);
+}
+.testi-card:hover .testi-avatar{
+  transform:scale(1.12) rotate(5deg);
+  border-color:var(--gold);
+  box-shadow:0 4px 16px rgba(200,169,110,.3);
+}
+.testi-name{font-size:13px;color:#fff;font-weight:500;line-height:1.3;}
+.testi-loc{font-size:11px;color:var(--gold-lt);margin-top:3px;opacity:.7;}
+
+/* ═══════ CTA ═══════ */
+.cta-banner{padding:clamp(60px,9vw,120px) clamp(20px,5vw,6%);background:url('https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1600') center/cover no-repeat;position:relative;text-align:center;overflow:hidden;}
+.cta-banner::before{content:'';position:absolute;inset:0;background:rgba(59,42,26,.82);}
+.cta-banner::after{content:'';position:absolute;left:0;right:0;height:2px;background:rgba(200,169,110,.2);animation:scanLine 5s linear infinite;pointer-events:none;}
+.cta-pulse{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;border-radius:50%;border:1px solid rgba(200,169,110,.15);pointer-events:none;}
+.cta-pulse:nth-child(1){animation:orbPulse 4s ease-in-out infinite;}
+.cta-pulse:nth-child(2){width:350px;height:350px;animation:orbPulse 4s ease-in-out infinite 1s;}
+.cta-pulse:nth-child(3){width:500px;height:500px;animation:orbPulse 4s ease-in-out infinite 2s;}
+.cta-inner{position:relative;z-index:1;max-width:min(660px,90vw);margin:auto;}
+.cta-inner h2{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,5vw,68px);font-weight:300;color:#fff;line-height:1.1;margin-bottom:18px;}
+.cta-inner p{font-size:clamp(13px,1.8vw,16px);color:rgba(255,255,255,.7);line-height:1.85;margin-bottom:32px;}
+
+/* ═══════ FOOTER ═══════ */
+footer{background:#1a0f08;color:rgba(255,255,255,.5);padding:clamp(40px,6vw,80px) clamp(20px,5vw,6%) 24px;position:relative;overflow:hidden;}
+footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);animation:goldSheen 4s linear infinite;background-size:200% auto;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:clamp(18px,4vw,52px);margin-bottom:clamp(28px,4vw,65px);}
+@media(max-width:780px){.footer-top{grid-template-columns:1fr 1fr;}}
+@media(max-width:460px){.footer-top{grid-template-columns:1fr;}}
+.footer-brand p{font-size:clamp(12px,1.3vw,13px);line-height:1.9;color:rgba(255,255,255,.38);margin-top:14px;max-width:270px;}
+.social-links{display:flex;gap:10px;margin-top:22px;}
+.social-btn{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,.4);text-decoration:none;transition:all .4s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;}
+.social-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:scale(0);border-radius:50%;transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
+.social-btn:hover{border-color:var(--gold);color:var(--brown);transform:scale(1.2) rotate(10deg);}
+.social-btn:hover::before{transform:scale(1);}
+.social-btn span{position:relative;z-index:1;}
+.footer-col h4{font-size:clamp(9px,1.2vw,10px);letter-spacing:2.5px;text-transform:uppercase;color:#fff;margin-bottom:18px;}
+.footer-col ul{list-style:none;}
+.footer-col ul li{margin-bottom:10px;}
+.footer-col ul li a{font-size:clamp(12px,1.3vw,13px);color:rgba(255,255,255,.38);text-decoration:none;transition:all .35s;cursor:pointer;display:inline-flex;align-items:center;gap:0;}
+.footer-col ul li a::before{content:'';width:0;height:1px;background:var(--gold);display:inline-block;vertical-align:middle;transition:width .35s;margin-right:0;}
+.footer-col ul li a:hover{color:var(--gold);padding-left:8px;}
+.footer-col ul li a:hover::before{width:12px;margin-right:6px;}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:clamp(10px,1.1vw,11px);color:rgba(255,255,255,.26);}
+
+/* ═══════ ORNAMENT ═══════ */
+.ornament{display:flex;align-items:center;justify-content:center;gap:16px;padding:6px 0 30px;}
+.ornament-line{flex:1;max-width:160px;height:1px;background:linear-gradient(to right,transparent,var(--gold-lt));}
+.ornament-line:last-child{background:linear-gradient(to left,transparent,var(--gold-lt));}
+.ornament-icon{font-size:17px;color:var(--gold);animation:pulse 2.5s ease-in-out infinite;}
+
+/* ═══════ SCROLL PAGES ═══════ */
+.scroll-page{min-height:100vh;background:var(--cream);}
+.scroll-topbar{display:flex;align-items:center;gap:12px;padding:clamp(12px,2vw,16px) clamp(15px,5vw,6%);background:rgba(250,246,240,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(200,169,110,.2);position:sticky;top:0;z-index:50;flex-wrap:wrap;animation:slideDown .5s ease both;}
+.back-btn{background:none;border:1px solid var(--gold-lt);color:var(--mocha);font-size:clamp(9px,1vw,11px);letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;padding:8px 18px;border-radius:30px;transition:all .4s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0;position:relative;overflow:hidden;}
+.back-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s ease;border-radius:30px;}
+.back-btn:hover{color:var(--brown);border-color:var(--gold);transform:translateX(-4px);}
+.back-btn:hover::before{transform:scaleX(1);}
+.back-btn span{position:relative;z-index:1;}
+.scroll-topbar .logo{margin-left:auto;font-family:'Great Vibes',cursive;font-size:clamp(22px,4vw,34px);color:var(--brown);}
+.scroll-topbar .logo span{color:var(--gold);}
+.scroll-wrapper{max-width:940px;margin:0 auto;padding:0 clamp(15px,4vw,24px) 100px;}
+.scroll-rod{position:relative;height:50px;display:flex;align-items:center;justify-content:center;}
+.scroll-rod::before{content:'';position:absolute;left:0;right:0;top:50%;height:20px;margin-top:-10px;background:linear-gradient(180deg,#d4b078 0%,#9c7540 45%,#6e4e26 70%,#c8a96e 100%);border-radius:10px;box-shadow:0 4px 18px rgba(59,42,26,.3);}
+.rod-knob{width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#e8d5b0 0%,#9c7540 55%,#6e4e26 100%);box-shadow:0 2px 8px rgba(59,42,26,.4);position:absolute;z-index:2;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.rod-knob:hover{transform:scale(1.15);}
+.rod-knob.l{left:-4px;}.rod-knob.r{right:-4px;}
+.parchment{background:linear-gradient(180deg,rgba(242,233,220,0) 0px,rgba(252,248,242,1) 38px,rgba(252,248,242,1) calc(100% - 38px),rgba(242,233,220,0) 100%);border-left:1.5px solid rgba(200,169,110,.28);border-right:1.5px solid rgba(200,169,110,.28);padding:clamp(35px,5vw,60px) clamp(18px,5vw,80px) 55px;transform-origin:top center;animation:unrollScroll 1.2s cubic-bezier(.16,1,.3,1) both;position:relative;overflow:hidden;}
+.parchment::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(200,169,110,.02) 28px,rgba(200,169,110,.02) 29px);pointer-events:none;}
+.p-content{opacity:0;animation:pFadeIn .7s ease .9s both;}
+.sp-header{text-align:center;padding-bottom:32px;border-bottom:1px solid var(--gold-lt);margin-bottom:44px;}
+.sp-header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,6vw,72px);font-weight:300;color:var(--brown);line-height:1.05;margin-bottom:14px;}
+.sp-header p{font-size:clamp(12px,1.5vw,14px);color:var(--muted);max-width:600px;margin:0 auto;line-height:1.85;}
+.flourish{text-align:center;font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--gold);letter-spacing:10px;margin:4px 0 32px;opacity:.7;animation:pulse 3s ease-in-out infinite;}
+.about-section{margin-bottom:38px;}
+.about-section h2{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,3vw,35px);font-weight:400;color:var(--brown);margin-bottom:18px;display:flex;align-items:center;gap:12px;}
+.about-section h2::before{content:'';width:40px;height:2px;background:linear-gradient(to right,var(--gold),var(--rose));flex-shrink:0;transition:width .4s;}
+.about-section:hover h2::before{width:60px;}
+.about-section p{font-size:clamp(12px,1.4vw,14px);color:var(--muted);line-height:2.1;margin-bottom:14px;}
+.chef-note{background:linear-gradient(135deg,rgba(200,169,110,.1),rgba(122,92,62,.07));border:1px solid var(--gold-lt);border-radius:12px;padding:clamp(22px,3vw,34px);margin-top:34px;text-align:center;animation:borderGlow 3s ease-in-out infinite;}
+.chef-note p{font-family:'Cormorant Garamond',serif;font-size:clamp(13px,1.8vw,18px);font-style:italic;color:var(--mocha);line-height:2;}
+.chef-note .csig{font-family:'Great Vibes',cursive;font-size:clamp(24px,4vw,32px);color:var(--gold);margin-top:12px;display:block;animation:heartbeat 3s ease-in-out infinite;}
+.gallery-page-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(12px,2.5vw,22px);margin-top:32px;}
+@media(max-width:500px){.gallery-page-grid{grid-template-columns:1fr;}}
+.gallery-item{border-radius:10px;overflow:hidden;aspect-ratio:4/3;cursor:pointer;position:relative;transition:transform .5s cubic-bezier(.34,1.56,.64,1),box-shadow .5s ease;}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.25,.46,.45,.94);}
+.gallery-item:hover{transform:scale(1.02);box-shadow:0 16px 40px rgba(59,42,26,.2);}
+.gallery-item:hover img{transform:scale(1.1);}
+.gallery-item::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(200,169,110,.15),rgba(59,42,26,.4));opacity:0;transition:opacity .4s;z-index:1;}
+.gallery-item::after{content:'⊕';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36px;color:rgba(255,255,255,.9);opacity:0;transition:opacity .4s;z-index:2;}
+.gallery-item:hover::before{opacity:1;}
+.gallery-item:hover::after{opacity:1;}
+.contact-form{max-width:600px;margin:32px auto 0;}
+.form-group{margin-bottom:26px;}
+.form-group label{display:block;font-size:clamp(11px,1.2vw,12px);letter-spacing:1.5px;text-transform:uppercase;color:var(--brown);margin-bottom:9px;font-weight:500;}
+.form-group input,.form-group textarea{width:100%;padding:clamp(10px,1.5vw,13px);border:1px solid var(--gold-lt);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:clamp(13px,1.4vw,14px);color:var(--text);background:rgba(255,255,255,.6);transition:all .4s cubic-bezier(.22,1,.36,1);}
+.form-group input:focus,.form-group textarea:focus{outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 4px rgba(200,169,110,.12);transform:translateY(-2px);}
+.form-group textarea{min-height:150px;resize:vertical;}
+.contact-info{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:44px;}
+@media(max-width:480px){.contact-info{grid-template-columns:1fr;}}
+.info-card{background:linear-gradient(135deg,rgba(200,169,110,.1),rgba(122,92,62,.07));border:1px solid var(--gold-lt);border-radius:12px;padding:clamp(18px,3vw,22px);text-align:center;transition:all .45s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;}
+.info-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--gold),var(--rose));transform:scaleX(0);transition:transform .4s ease;}
+.info-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(59,42,26,.12);border-color:var(--gold);}
+.info-card:hover::before{transform:scaleX(1);}
+.info-card h3{font-family:'Cormorant Garamond',serif;font-size:clamp(16px,2.5vw,19px);color:var(--brown);margin-bottom:11px;transition:color .3s;}
+.info-card:hover h3{color:var(--rose);}
+.info-card p{font-size:clamp(12px,1.3vw,13px);color:var(--muted);}
+
+/* ═══════ CURSOR TRAIL ═══════ */
+.cursor-trail{position:fixed;width:8px;height:8px;border-radius:50%;background:var(--gold);pointer-events:none;z-index:9999;opacity:0;transform:translate(-50%,-50%);transition:opacity .3s;}
+.cursor-outer{position:fixed;width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(200,169,110,.5);pointer-events:none;z-index:9998;opacity:0;transform:translate(-50%,-50%);}
+.gsap-float-emoji{position:absolute;font-size:24px;pointer-events:none;opacity:0;will-change:transform;}
+.swipe-hint{display:none;align-items:center;justify-content:center;gap:8px;padding:12px;color:var(--muted);font-size:11px;letter-spacing:1px;}
+@media(max-width:600px){.swipe-hint{display:flex;}}
+
+/* ═══════ LOADING ═══════ */
+#loader{position:fixed;inset:0;background:var(--brown);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity .7s ease,visibility .7s ease;}
+#loader.hidden{opacity:0;visibility:hidden;}
+.loader-logo{font-family:'Great Vibes',cursive;font-size:clamp(40px,8vw,64px);color:var(--gold);animation:bounceIn 1s cubic-bezier(.34,1.56,.64,1) .2s both;}
+.loader-logo span{color:#fff;}
+.loader-tagline{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.4);}
+.loader-bar-wrap{width:220px;height:2px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden;}
+.loader-bar{height:100%;width:0%;background:linear-gradient(to right,var(--gold),var(--rose));border-radius:2px;position:relative;}
+.loader-bar::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:6px;height:6px;background:var(--rose);border-radius:50%;box-shadow:0 0 8px var(--rose);}
+
+/* ═══════ PAGE TRANSITION ═══════ */
+#page-transition{position:fixed;inset:0;background:var(--brown);z-index:500;transform:scaleY(0);transform-origin:top;pointer-events:none;transition:transform .45s cubic-bezier(.76,0,.24,1);}
+#page-transition.entering{transform:scaleY(1);transform-origin:top;}
+#page-transition.leaving{transform:scaleY(0);transform-origin:bottom;}
+
+/* ═══════ TOAST ═══════ */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--brown);color:#fff;border:1px solid var(--gold);padding:14px 28px;border-radius:30px;font-size:13px;letter-spacing:.5px;z-index:1000;transition:transform .5s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;white-space:nowrap;backdrop-filter:blur(10px);}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.sparkle-dot{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--gold);pointer-events:none;animation:glitterPop .8s ease forwards;z-index:100;}
+
+@media(hover:none){
+  .bs-card:active{transform:translateY(-4px);box-shadow:0 10px 30px rgba(59,42,26,.15);}
+  .btn-primary:active{transform:scale(.97);}
+}
+@media(max-width:480px){.step-progress{display:none;}.cta-pulse{display:none;}}
+</style>
+</head>
+<body>
+
+<div class="cursor-trail" id="cursorTrail"></div>
+<div class="cursor-outer" id="cursorOuter"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">Pastry<span>Chef</span></div>
+  <div class="loader-tagline">Artisan · Fresh · Crafted</div>
+  <div class="loader-bar-wrap"><div class="loader-bar" id="loaderBar"></div></div>
+</div>
+<div id="page-transition"></div>
+<div class="toast" id="toast"></div>
+<div class="nav-backdrop" id="navBackdrop"></div>
+
+<!-- ══════════ HOME PAGE ══════════ -->
+<div id="home-page" class="page active">
+
+<nav id="navbar">
+  <div class="nav-left">
+    <img src="https://i.ibb.co/XxLhXx1V/Whats-App-Image-2026-04-11-at-3-43-42-PM-1.jpg" class="nav-logo-img" onclick="goHome()" alt="PastryChef Logo">
+    <div class="logo" onclick="goHome()">Pastry<span>Chef</span></div>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <button class="drawer-close" id="drawerClose" aria-label="Close menu">✕</button>
+    <li><a onclick="goHome();closeMenu()">Home</a></li>
+    <li><a onclick="nav('about');closeMenu()">About</a></li>
+    <li><a onclick="nav('menu');closeMenu()">Menu</a></li>
+    <li><a onclick="nav('gallery');closeMenu()">Gallery</a></li>
+    <li><a onclick="nav('contact');closeMenu()">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="particles" id="particles"></div>
+
+  <div class="slide active" id="slide0">
+    <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=1600')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">✦ Artisan Patisserie Since 2010</div>
+      <h1>Crafted with Passion, Baked to Perfection</h1>
+      <p>Every creation tells a story — from hand-rolled croissants to bespoke celebration cakes, made fresh each morning.</p>
+      <div class="slide-btns">
+        <button class="btn-primary ripple-btn" onclick="nav('menu')">Explore Menu</button>
+        <button class="btn-outline ripple-btn" onclick="nav('about')">Our Story</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" id="slide1">
+    <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1550547660-d9450f859349?w=1600')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">✦ Signature Collection</div>
+      <h1>Where Flour, Butter &amp; Art Become One</h1>
+      <p>Our master pastry chefs bring decades of French technique to every single bite.</p>
+      <div class="slide-btns">
+        <button class="btn-primary ripple-btn" onclick="nav('menu')">View Cakes</button>
+        <button class="btn-outline ripple-btn" onclick="nav('gallery')">See Our Work</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" id="slide2">
+    <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1488477181946-6428a0291777?w=1600')"></div>
+    <div class="slide-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag">✦ Fresh Every Morning</div>
+      <h1>Start Your Day the Sweet Way</h1>
+      <p>Freshly baked pastries, viennoiserie, and seasonal specials ready from 7am daily.</p>
+      <div class="slide-btns">
+        <button class="btn-primary ripple-btn" onclick="nav('contact')">Find Us</button>
+        <button class="btn-outline ripple-btn" onclick="nav('menu')">See Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-badge" id="heroBadge">
+    <div class="hero-badge-num">15+</div>
+    <div class="hero-badge-label">Years of craft</div>
+  </div>
+
+  <div class="slider-controls">
+    <div class="dot active" onclick="goTo(0)"></div>
+    <div class="dot" onclick="goTo(1)"></div>
+    <div class="dot" onclick="goTo(2)"></div>
+  </div>
+  <div class="slider-arrow">
+    <button class="arrow-btn" onclick="prevSlide()"><span>↑</span></button>
+    <button class="arrow-btn" onclick="nextSlide()"><span>↓</span></button>
+  </div>
+  <div class="scroll-hint"><div class="scroll-line"></div><span>Scroll</span></div>
+</section>
+
+<!-- WAVE -->
+<div class="wave-divider" style="background:#fff;">
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" style="height:60px;" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,30 C240,60 480,0 720,30 C960,60 1200,0 1440,30 L1440,60 L0,60 Z" fill="#faf6f0"/>
+  </svg>
+</div>
+
+<!-- WELCOME -->
+<section class="welcome" id="welcomeSection">
+  <div class="welcome-text" id="welcomeText">
+    <span class="eyebrow">Our Philosophy</span>
+    <h2>Baking is an <em>art</em> we live &amp; breathe every day</h2>
+    <p>Founded in the heart of the city, PastryChef is more than a bakery — it is a sanctuary for lovers of fine pastry. We source only the finest seasonal ingredients, working with local farms and premium importers.</p>
+    <p>Our recipes are rooted in classical French technique, brought to life with contemporary creativity and a deep respect for tradition.</p>
+    <div class="signature">Chef Amara</div>
+  </div>
+  <div class="welcome-images" id="welcomeImages">
+    <div class="wi"><img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600" alt="Bakery" loading="lazy"></div>
+    <div class="wi"><img src="https://images.unsplash.com/photo-1603532648955-039310d9ed75?w=400" alt="Cake" loading="lazy"></div>
+    <div class="wi"><img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400" alt="Pastry" loading="lazy"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar" id="statsBar">
+  <div class="stat-item" id="s1"><div class="stat-num" data-target="15" data-suffix="+">0</div><div class="stat-divider"></div><div class="stat-label">Years of Excellence</div></div>
+  <div class="stat-item" id="s2"><div class="stat-num" data-target="80" data-suffix="+">0</div><div class="stat-divider"></div><div class="stat-label">Signature Recipes</div></div>
+  <div class="stat-item" id="s3"><div class="stat-num" data-target="12" data-suffix="k">0</div><div class="stat-divider"></div><div class="stat-label">Happy Customers</div></div>
+  <div class="stat-item" id="s4"><div class="stat-num" data-target="6" data-suffix="">0</div><div class="stat-divider"></div><div class="stat-label">Industry Awards</div></div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-inner" id="marqueeInner">
+    <span class="marquee-item">Handcrafted Croissants</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Belgian Chocolate Gateau</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">French Patisserie</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Artisan Baking</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Fresh Daily</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Seasonal Tarts</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Handcrafted Croissants</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Belgian Chocolate Gateau</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">French Patisserie</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Artisan Baking</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Fresh Daily</span><span class="marquee-dot">✦</span>
+    <span class="marquee-item">Seasonal Tarts</span><span class="marquee-dot">✦</span>
+  </div>
+</div>
+
+<!-- BESTSELLERS -->
+<section class="bestsellers" id="bestsellersSection">
+  <span class="ingredient-float" style="top:8%;left:3%;animation-duration:7s;animation-delay:0s">🥐</span>
+  <span class="ingredient-float" style="top:20%;right:5%;animation-duration:9s;animation-delay:2s">🎂</span>
+  <span class="ingredient-float" style="bottom:15%;left:7%;animation-duration:8s;animation-delay:4s">🍰</span>
+  <div class="section-header" id="bsHeader">
+    <div class="section-header-text">
+      <span class="eyebrow">Crowd Favourites</span>
+      <h2>Our Bestsellers</h2>
+    </div>
+    <a class="view-all" onclick="nav('menu')">View Full Menu →</a>
+  </div>
+  <div class="bs-grid" id="bsGrid">
+    <div class="bs-card" id="bsCard1">
+      <div class="bs-img">
+        <img src="https://images.unsplash.com/photo-1603532648955-039310d9ed75?w=800" alt="Dark Chocolate Gateau" loading="lazy">
+        <span class="bs-badge">Chef's Pick</span>
+      </div>
+      <div class="bs-body">
+        <h3>Dark Chocolate Gateau</h3>
+        <p>Decadent layers of Belgian dark chocolate sponge with salted caramel crème.</p>
+      </div>
+    </div>
+    <div class="bs-card" id="bsCard2">
+      <div class="bs-img">
+        <img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=800" alt="Blueberry Almond Muffins" loading="lazy">
+        <span class="bs-badge">Bestseller</span>
+      </div>
+      <div class="bs-body">
+        <h3>Blueberry Almond Muffins</h3>
+        <p>Fluffy golden muffins bursting with wild blueberries and toasted almond crumble.</p>
+      </div>
+    </div>
+    <div class="bs-card" id="bsCard3">
+      <div class="bs-img">
+        <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800" alt="Seasonal Fruit Tart" loading="lazy">
+      </div>
+      <div class="bs-body">
+        <h3>Seasonal Fruit Tart</h3>
+        <p>Crisp butter shell with vanilla custard and glazed seasonal fruits.</p>
+      </div>
+    </div>
+  </div>
+  <div class="swipe-hint">← Swipe to see more →</div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="processSection">
+  <span class="eyebrow" id="processEye">How We Do It</span>
+  <h2 id="processTitle">From Kitchen to Your Table</h2>
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-icon">✦</div><div class="ornament-line"></div></div>
+  <div class="steps" id="stepsGrid">
+    <div class="step" id="step1">
+      <div class="step-num">01</div>
+      <h4>Sourcing Ingredients</h4>
+      <p>We hand-select seasonal produce and premium imports from trusted suppliers worldwide.</p>
+      <div class="step-progress"><div class="step-progress-fill" style="--target-w:85%"></div></div>
+    </div>
+    <div class="step" id="step2">
+      <div class="step-num">02</div>
+      <h4>Artisan Preparation</h4>
+      <p>Every dough, batter, and cream is prepared from scratch using classical techniques.</p>
+      <div class="step-progress"><div class="step-progress-fill" style="--target-w:90%"></div></div>
+    </div>
+    <div class="step" id="step3">
+      <div class="step-num">03</div>
+      <h4>Expert Baking</h4>
+      <p>Baked in our professional ovens by chefs with decades of patisserie experience.</p>
+      <div class="step-progress"><div class="step-progress-fill" style="--target-w:95%"></div></div>
+    </div>
+    <div class="step" id="step4">
+      <div class="step-num">04</div>
+      <h4>Delivered Fresh</h4>
+      <p>Same-day delivery ensures every order reaches you at its peak, warm from the oven.</p>
+      <div class="step-progress"><div class="step-progress-fill" style="--target-w:100%"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS — FIXED ═══ -->
+<section class="testimonials" id="testiSection">
+  <div class="testi-orb" style="width:200px;height:200px;top:10%;left:5%;animation-delay:0s;"></div>
+  <div class="testi-orb" style="width:300px;height:300px;bottom:10%;right:8%;animation-delay:2s;"></div>
+  <span class="eyebrow" id="testiEye">What Our Guests Say</span>
+  <h2 id="testiTitle">Moments of Joy</h2>
+  <div class="testi-grid" id="testiGrid">
+    <div class="testi-card">
+      <span class="testi-stars">★★★★★</span>
+      <blockquote>"The chocolate gateau was the highlight of our anniversary dinner. Absolutely extraordinary — we still talk about it."</blockquote>
+      <div class="testi-author">
+        <div class="testi-avatar">P</div>
+        <div>
+          <div class="testi-name">Priya Sharma</div>
+          <div class="testi-loc">Hyderabad</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <span class="testi-stars">★★★★★</span>
+      <blockquote>"Ordered a custom wedding cake and was completely blown away. The attention to detail and flavour were beyond expectations."</blockquote>
+      <div class="testi-author">
+        <div class="testi-avatar">R</div>
+        <div>
+          <div class="testi-name">Rahul &amp; Ananya</div>
+          <div class="testi-loc">Hyderabad</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <span class="testi-stars">★★★★★</span>
+      <blockquote>"Their croissants are genuinely the best I've had outside of Paris. I pick up a dozen every Sunday without fail."</blockquote>
+      <div class="testi-author">
+        <div class="testi-avatar">M</div>
+        <div>
+          <div class="testi-name">Meera Krishnan</div>
+          <div class="testi-loc">Hyderabad</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-banner" id="ctaSection">
+  <div class="cta-pulse"></div>
+  <div class="cta-pulse"></div>
+  <div class="cta-pulse"></div>
+  <div class="cta-inner" id="ctaInner">
+    <span class="eyebrow">Ready to Indulge?</span>
+    <h2>Place a Custom Order Today</h2>
+    <p>Celebrations, corporate gifting, weddings — let us create something unforgettable just for you.</p>
+    <button class="btn-primary ripple-btn" onclick="nav('contact')">Get in Touch</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footerSection">
+  <div class="footer-top" id="footerTop">
+    <div class="footer-brand">
+      <div class="logo" onclick="goHome()">Pastry<span>Chef</span></div>
+      <p>Artisan bakery crafting extraordinary pastries and cakes since 2010. Every bite is made with love.</p>
+      <div class="social-links">
+        <a href="#" class="social-btn"><span>f</span></a>
+        <a href="#" class="social-btn"><span>ig</span></a>
+        <a href="#" class="social-btn"><span>tw</span></a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Menu</h4><ul><li><a onclick="nav('menu')">Cakes &amp; Gateaux</a></li><li><a onclick="nav('menu')">Viennoiserie</a></li><li><a onclick="nav('menu')">Macarons</a></li></ul></div>
+    <div class="footer-col"><h4>Visit Us</h4><ul><li><a>Banjara Hills, Hyderabad</a></li><li><a>Mon–Sat: 7am – 8pm</a></li><li><a>Sun: 8am – 5pm</a></li><li><a>+91 98765 43210</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a onclick="nav('about')">Our Story</a></li><li><a onclick="nav('gallery')">Gallery</a></li><li><a onclick="nav('contact')">Contact</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 PastryChef Artisan Bakery. All rights reserved.</span>
+    <span>Crafted with ♥ in Hyderabad</span>
+  </div>
+</footer>
+</div><!-- end #home-page -->
+
+<!-- ══════════ ABOUT PAGE ══════════ -->
+<div id="about-page" class="page scroll-page">
+  <div class="scroll-topbar"><button class="back-btn" onclick="goHome()"><span>← Back</span></button><div class="logo" onclick="goHome()">Pastry<span>Chef</span></div></div>
+  <div class="scroll-wrapper">
+    <div class="scroll-rod"><div class="rod-knob l"></div><div class="rod-knob r"></div></div>
+    <div class="parchment" id="about-parchment">
+      <div class="p-content">
+        <div class="sp-header"><span class="eyebrow">Est. 2010 · Banjara Hills, Hyderabad</span><h1>Our Story</h1><p>A journey of passion, tradition, and exceptional pastry craft.</p></div>
+        <div class="flourish">· · ✦ · ·</div>
+        <div class="about-section"><h2>The Beginning</h2><p>PastryChef was born from a simple dream in 2010 — to create a sanctuary where the art of French patisserie could flourish in the heart of Hyderabad. Chef Amara, trained in Lyon and Paris, envisioned a bakery that honored traditional techniques while celebrating the vibrant flavors of local and premium ingredients.</p><p>What started as a modest storefront has grown into the city's most beloved artisan bakery, yet we remain committed to the founding principles: quality above all, freshness every day, and passion in every bite.</p></div>
+        <div class="flourish">· ✦ ·</div>
+        <div class="about-section"><h2>Our Philosophy</h2><p>We believe that pastry is not just food — it's an expression of art, care, and tradition. Every croissant laminated by hand, every ganache whipped to perfection, every pastry cream infused with care tells a story.</p><p>Our commitment is to source only the finest ingredients: Breton butter, Belgian chocolate, free-range eggs, and seasonal produce from trusted local farms.</p><p>We never compromise on freshness. Our entire range is prepared fresh daily, baked in small batches, and available from 7am onwards.</p></div>
+        <div class="flourish">· ✦ ·</div>
+        <div class="about-section"><h2>Master Craftsmanship</h2><p>Our team consists of classically trained pastry chefs who have spent years perfecting their craft. Chef Amara leads the kitchen with decades of experience from Michelin-starred establishments across Europe.</p></div>
+        <div class="flourish">· ✦ ·</div>
+        <div class="about-section"><h2>Awards & Recognition</h2><p>• Best Patisserie in Hyderabad (2023 &amp; 2024)<br>• Artisan Excellence Award (2022)<br>• Best French Pastries — South India Food Awards<br>• Featured in Global Pastry Magazine</p></div>
+        <div class="flourish">· ✦ ·</div>
+        <div class="about-section"><h2>Our Commitment</h2><p>We are committed to sustainability and community. We work with local farmers, minimize food waste through thoughtful production, and donate unsold pastries to local charities daily.</p></div>
+        <div class="chef-note"><p>"Baking is my life's calling. It's where tradition meets creativity, where precision meets passion. Every pastry that leaves our kitchen carries a piece of our soul."</p><span class="csig">Chef Amara</span></div>
+      </div>
+    </div>
+    <div class="scroll-rod"><div class="rod-knob l"></div><div class="rod-knob r"></div></div>
+  </div>
+</div>
+
+<!-- ══════════ MENU PAGE ══════════ -->
+<div id="menu-page" class="page scroll-page">
+  <div class="scroll-topbar"><button class="back-btn" onclick="goHome()"><span>← Back</span></button><div class="logo" onclick="goHome()">Pastry<span>Chef</span></div></div>
+  <div class="scroll-wrapper">
+    <div class="scroll-rod"><div class="rod-knob l"></div><div class="rod-knob r"></div></div>
+    <div class="parchment" id="menu-parchment">
+      <div class="p-content">
+        <div class="sp-header"><span class="eyebrow">Est. 2010 · Banjara Hills, Hyderabad</span><h1>Our Menu</h1><p>All items are prepared fresh daily using the finest seasonal ingredients and classical French technique.</p></div>
+        <div class="flourish">· · ✦ · ·</div>
+        <div class="about-section"><h2>Cakes & Gâteaux</h2><p><strong>Dark Chocolate Gateau</strong><br>Belgian dark chocolate sponge, salted caramel crème, glossy cocoa glaze</p><p><strong>Strawberry Dream Cake</strong><br>Vanilla sponge, fresh strawberry compote, whipped Chantilly cream</p><p><strong>Seasonal Fruit Gâteau</strong><br>Fruit-laden sponge, diplomat cream, glazed market-fresh fruits</p><p><strong>Opera Cake</strong><br>Coffee-soaked joconde, coffee buttercream, dark chocolate ganache</p></div>
+        <div class="flourish">· ✦ ·</div>
+        <div class="about-section"><h2>Viennoiserie</h2><p><strong>Butter Croissant</strong><br>72-hour laminated dough, pure Breton butter</p><p><strong>Pain au Chocolat</strong><br>Double dark chocolate batons, shatteringly flaky pastry</p><p><strong>Almond Croissant</strong><br>Frangipane-filled, toasted flaked almonds, icing sugar</p><p><strong>Kouign-Amann</strong><br>Caramelised butter layers, fleur de sel, Breton-style</p></div>
+        <div class="flourish">· ✦ ·</div>
+        <div class="about-section"><h2>Tarts & Pastries</h2><p><strong>Seasonal Fruit Tart</strong><br>Butter sablé shell, vanilla crème pâtissière, glazed fruits</p><p><strong>Lemon Tart</strong><br>Sharp lemon curd, Italian meringue kisses, candied zest</p><p><strong>Mille-Feuille</strong><br>Caramelised puff pastry, vanilla crème, fondant glaze</p></div>
+        <div class="chef-note"><p>"Each item on this menu is a labour of love. We bake in small batches to ensure every piece that leaves our kitchen is exactly as it should be."</p><span class="csig">Chef Amara</span></div>
+      </div>
+    </div>
+    <div class="scroll-rod"><div class="rod-knob l"></div><div class="rod-knob r"></div></div>
+  </div>
+</div>
+
+<!-- ══════════ GALLERY PAGE ══════════ -->
+<div id="gallery-page" class="page scroll-page">
+  <div class="scroll-topbar"><button class="back-btn" onclick="goHome()"><span>← Back</span></button><div class="logo" onclick="goHome()">Pastry<span>Chef</span></div></div>
+  <div class="scroll-wrapper">
+    <div class="scroll-rod"><div class="rod-knob l"></div><div class="rod-knob r"></div></div>
+    <div class="parchment" id="gallery-parchment">
+      <div class="p-content">
+        <div class="sp-header"><span class="eyebrow">Visual Treats</span><h1>From Our Kitchen</h1><p>A glimpse into the artistry and passion that goes into every creation.</p></div>
+        <div class="flourish">· · ✦ · ·</div>
+        <div class="gallery-page-grid">
+          <div class="gallery-item"><img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800" alt="Bakery showcase" loading="lazy"></div>
+          <div class="gallery-item"><img src="https://images.unsplash.com/photo-1603532648955-039310d9ed75?w=800" alt="Chocolate cake" loading="lazy"></div>
+          <div class="gallery-item"><img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800" alt="Pastry details" loading="lazy"></div>
+          <div class="gallery-item"><img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800" alt="Fresh pastries" loading="lazy"></div>
+          <div class="gallery-item"><img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800" alt="Berry cake" loading="lazy"></div>
+          <div class="gallery-item"><img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=800" alt="Muffins" loading="lazy"></div>
+        </div>
+        <div class="flourish">· ✦ ·</div>
+        <div class="about-section"><h2>Craftsmanship in Every Frame</h2><p>These photographs capture the dedication and artistry of our team. From the delicate lamination of croissant dough to the precise decoration of celebration cakes, every moment reflects our commitment to excellence.</p></div>
+        <div class="chef-note"><p>"In the kitchen, we don't just bake — we create memories. Every pastry is an opportunity to bring joy to someone's day."</p><span class="csig">Chef Amara</span></div>
+      </div>
+    </div>
+    <div class="scroll-rod"><div class="rod-knob l"></div><div class="rod-knob r"></div></div>
+  </div>
+</div>
+
+<!-- ══════════ CONTACT PAGE ══════════ -->
+<div id="contact-page" class="page scroll-page">
+  <div class="scroll-topbar"><button class="back-btn" onclick="goHome()"><span>← Back</span></button><div class="logo" onclick="goHome()">Pastry<span>Chef</span></div></div>
+  <div class="scroll-wrapper">
+    <div class="scroll-rod"><div class="rod-knob l"></div><div class="rod-knob r"></div></div>
+    <div class="parchment" id="contact-parchment">
+      <div class="p-content">
+        <div class="sp-header"><span class="eyebrow">Get in Touch</span><h1>Contact Us</h1><p>We'd love to hear from you. Reach out for custom orders, inquiries, or just to chat about pastries.</p></div>
+        <div class="flourish">· · ✦ · ·</div>
+        <div class="contact-form">
+          <div class="form-group"><label for="name">Your Name *</label><input type="text" id="name" name="name" required placeholder="e.g. Priya Sharma"></div>
+          <div class="form-group"><label for="email">Email Address *</label><input type="email" id="email" name="email" required placeholder="you@example.com"></div>
+          <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" name="phone" placeholder="+91 ..."></div>
+          <div class="form-group"><label for="subject">Subject *</label><input type="text" id="subject" name="subject" required placeholder="Custom cake order..."></div>
+          <div class="form-group"><label for="message">Message *</label><textarea id="message" name="message" required placeholder="Tell us about your dream pastry..."></textarea></div>
+          <button type="button" class="btn-primary ripple-btn" onclick="handleSubmit()" style="width:100%;padding:16px;">Send Message ✦</button>
+        </div>
+        <div class="flourish">· ✦ ·</div>
+        <div class="contact-info">
+          <div class="info-card"><h3>📍 Location</h3><p>Banjara Hills<br>Hyderabad, India</p></div>
+          <div class="info-card"><h3>🕐 Hours</h3><p>Mon–Sat: 7am – 8pm<br>Sun: 8am – 5pm</p></div>
+          <div class="info-card"><h3>📞 Phone</h3><p>+91 98765 43210</p></div>
+          <div class="info-card"><h3>✉️ Email</h3><p>hello@pastrychef.in<br>orders@pastrychef.in</p></div>
+        </div>
+        <div class="chef-note" style="margin-top:44px;"><p>"We believe in personal connections. Whether it's a quick croissant or a grand wedding cake, we're here to make your moment sweet."</p><span class="csig">Chef Amara & Team</span></div>
+      </div>
+    </div>
+    <div class="scroll-rod"><div class="rod-knob l"></div><div class="rod-knob r"></div></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   CORE APP — PastryChef
+═══════════════════════════════════════════ */
+
+/* ─── HISTORY-BASED NAVIGATION (back gesture fix) ─── */
+/* We use pushState to track which page is open.
+   When the user presses the hardware/browser back button,
+   popstate fires and we return to home. */
+
+let _currentPage = 'home';
+
+function nav(page){
+  if(_currentPage === page) return;
+  _currentPage = page;
+  /* Push a state so the back button can pop back to home */
+  history.pushState({page: page}, '', '#' + page);
+  _transitionTo(page + '-page', page);
+}
+
+function goHome(){
+  if(_currentPage === 'home') return;
+  _currentPage = 'home';
+  /* Replace so pressing back from home doesn't go to a sub-page again */
+  history.replaceState({page:'home'}, '', location.pathname);
+  _transitionToHome();
+}
+
+/* Listen for hardware/browser back swipe */
+window.addEventListener('popstate', function(e){
+  const state = e.state;
+  if(!state || state.page === 'home'){
+    _currentPage = 'home';
+    _transitionToHome();
+  } else {
+    _currentPage = state.page;
+    _transitionTo(state.page + '-page', state.page);
+  }
+});
+
+/* Set initial history entry */
+history.replaceState({page:'home'}, '', location.pathname);
+
+const pt = document.getElementById('page-transition');
+
+function _transitionTo(pageId, pageName){
+  pt.style.transition = 'transform .45s cubic-bezier(.76,0,.24,1)';
+  pt.className = 'entering'; pt.style.transform = 'scaleY(1)';
+  setTimeout(function(){
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    window.scrollTo(0, 0);
+    triggerParchment(pageName + '-parchment');
+    pt.className = 'leaving'; pt.style.transform = 'scaleY(0)';
+  }, 380);
+}
+
+function _transitionToHome(){
+  pt.style.transform = 'scaleY(1)'; pt.className = 'entering';
+  setTimeout(function(){
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('home-page').classList.add('active');
+    window.scrollTo(0, 0);
+    pt.className = 'leaving'; pt.style.transform = 'scaleY(0)';
+  }, 380);
+}
+
+function triggerParchment(id){
+  const p = document.getElementById(id); if(!p) return;
+  const pc = p.querySelector('.p-content');
+  p.style.animation = 'none'; pc.style.animation = 'none';
+  p.offsetHeight;
+  p.style.animation = 'unrollScroll 1.2s cubic-bezier(.16,1,.3,1) both';
+  pc.style.animation = 'pFadeIn .7s ease .9s both';
+}
+
+/* ─── LOADER ─── */
+(function(){
+  const bar = document.getElementById('loaderBar');
+  const loader = document.getElementById('loader');
+  let w = 0;
+  const iv = setInterval(function(){
+    w += Math.random() * 15 + 6;
+    if(w >= 100){
+      w = 100; clearInterval(iv);
+      setTimeout(function(){
+        loader.classList.add('hidden');
+        document.getElementById('heroBadge').classList.add('show');
+        initGSAP();
+      }, 300);
+    }
+    bar.style.width = w + '%';
+  }, 70);
+})();
+
+/* ─── PARTICLES ─── */
+(function(){
+  const c = document.getElementById('particles'); if(!c) return;
+  for(let i = 0; i < 28; i++){
+    const p = document.createElement('div'); p.className = 'particle';
+    const s = 2 + Math.random() * 5;
+    p.style.cssText = `left:${Math.random()*100}%;width:${s}px;height:${s}px;animation-duration:${10+Math.random()*14}s;animation-delay:${Math.random()*14}s;`;
+    c.appendChild(p);
+  }
+})();
+
+/* ─── NAVBAR SCROLL ─── */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', function(){
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+}, {passive:true});
+
+/* ─── MOBILE DRAWER ─── */
+const ham = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+const backdrop = document.getElementById('navBackdrop');
+const closeBtn = document.getElementById('drawerClose');
+
+function openMenu(){
+  ham.classList.add('open');
+  navLinks.classList.add('open');
+  backdrop.classList.add('visible');
+  requestAnimationFrame(function(){ backdrop.classList.add('open'); });
+  document.body.style.overflow = 'hidden';
+}
+function closeMenu(){
+  ham.classList.remove('open');
+  navLinks.classList.remove('open');
+  backdrop.classList.remove('open');
+  document.body.style.overflow = '';
+  backdrop.addEventListener('transitionend', function(){
+    backdrop.classList.remove('visible');
+  }, {once:true});
+}
+
+ham.addEventListener('click', function(e){
+  e.stopPropagation();
+  navLinks.classList.contains('open') ? closeMenu() : openMenu();
+});
+closeBtn.addEventListener('click', closeMenu);
+backdrop.addEventListener('click', closeMenu);
+
+/* Close drawer on escape key */
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape' && navLinks.classList.contains('open')) closeMenu();
+});
+
+/* ─── HERO SLIDER ─── */
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.dot');
+let current = 0, sliderTimer;
+function goTo(n){
+  slides[current].classList.remove('active');
+  dots[current].classList.remove('active');
+  current = (n + slides.length) % slides.length;
+  slides[current].classList.add('active');
+  dots[current].classList.add('active');
+  resetTimer();
+}
+function nextSlide(){ goTo(current + 1); }
+function prevSlide(){ goTo(current - 1); }
+function resetTimer(){ clearInterval(sliderTimer); sliderTimer = setInterval(nextSlide, 5500); }
+resetTimer();
+
+let touchStartX = 0, touchStartY = 0;
+const hero = document.querySelector('.hero');
+hero.addEventListener('touchstart', function(e){
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, {passive:true});
+hero.addEventListener('touchend', function(e){
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+  if(Math.abs(dx) > 50 && dy < 80){ dx < 0 ? nextSlide() : prevSlide(); }
+}, {passive:true});
+
+/* ─── RIPPLE ─── */
+document.querySelectorAll('.ripple-btn').forEach(function(btn){
+  btn.addEventListener('click', function(e){
+    const r = document.createElement('span'); r.className = 'ripple-wave';
+    const rect = this.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 2.2;
+    r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px;`;
+    this.appendChild(r); setTimeout(function(){ r.remove(); }, 700);
+  });
+});
+
+/* ─── TOAST ─── */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3200);
+}
+
+/* ─── FORM ─── */
+function handleSubmit(){
+  const btn = document.querySelector('#contact-page .btn-primary');
+  const nameEl = document.getElementById('name');
+  const emailEl = document.getElementById('email');
+  if(!nameEl || !nameEl.value || !emailEl || !emailEl.value){
+    showToast('Please fill in required fields.'); return;
+  }
+  btn.textContent = 'Sending... ✦'; btn.disabled = true; btn.style.opacity = '.7';
+  setTimeout(function(){
+    showToast('✦ Message sent! We\'ll be in touch shortly.');
+    ['name','email','phone','subject','message'].forEach(function(id){
+      const el = document.getElementById(id); if(el) el.value = '';
+    });
+    btn.textContent = 'Send Message ✦'; btn.disabled = false; btn.style.opacity = '1';
+  }, 1400);
+}
+
+/* ══════════════════════════════════════════
+   GSAP ANIMATIONS
+══════════════════════════════════════════ */
+function initGSAP(){
+  if(typeof gsap === 'undefined') return;
+  gsap.registerPlugin(ScrollTrigger, TextPlugin);
+
+  const isMobile = window.matchMedia('(hover:none)').matches || window.innerWidth < 768;
+
+  /* ── CURSOR TRAIL (desktop only) ── */
+  if(!isMobile){
+    const trail = document.getElementById('cursorTrail');
+    const outer = document.getElementById('cursorOuter');
+    trail.style.opacity = '1'; outer.style.opacity = '1';
+    let mx = 0, my = 0, ox = 0, oy = 0;
+    document.addEventListener('mousemove', function(e){ mx = e.clientX; my = e.clientY; });
+    gsap.ticker.add(function(){
+      ox += (mx - ox) * 0.12; oy += (my - oy) * 0.12;
+      gsap.set(trail, {x:mx, y:my});
+      gsap.set(outer, {x:ox, y:oy});
+    });
+    document.querySelectorAll('a,button,.bs-card,.wi').forEach(function(el){
+      el.addEventListener('mouseenter', function(){ gsap.to(outer,{scale:2.2,opacity:.35,duration:.3,ease:'power2.out'}); gsap.to(trail,{scale:0,duration:.2}); });
+      el.addEventListener('mouseleave', function(){ gsap.to(outer,{scale:1,opacity:1,duration:.3,ease:'power2.out'}); gsap.to(trail,{scale:1,duration:.2}); });
+    });
+  }
+
+  /* ── WELCOME SECTION ── */
+  const wt = document.getElementById('welcomeText');
+  const wi = document.getElementById('welcomeImages');
+  if(wt && wi){
+    gsap.from(wt, {scrollTrigger:{trigger:wt,start:'top 80%',toggleActions:'play none none none'},x:-70,opacity:0,duration:1.1,ease:'power3.out'});
+    gsap.from(wi.querySelectorAll('.wi'), {
+      scrollTrigger:{trigger:wi,start:'top 82%',toggleActions:'play none none none'},
+      y:60,opacity:0,scale:.9,duration:1,ease:'back.out(1.3)',stagger:{amount:.5,from:'start'}
+    });
+  }
+
+  /* ── STAT COUNTER ── */
+  let countersRan = false;
+  const statsBar = document.getElementById('statsBar');
+  if(statsBar){
+    gsap.from([document.getElementById('s1'),document.getElementById('s2'),document.getElementById('s3'),document.getElementById('s4')], {
+      scrollTrigger:{trigger:statsBar,start:'top 80%'},
+      y:50,opacity:0,duration:.8,stagger:.12,ease:'back.out(1.7)'
+    });
+    ScrollTrigger.create({
+      trigger:statsBar, start:'top 80%',
+      onEnter:function(){
+        if(countersRan) return; countersRan = true;
+        document.querySelectorAll('.stat-num[data-target]').forEach(function(el){
+          const target = parseInt(el.dataset.target, 10);
+          const suffix = el.dataset.suffix || '';
+          gsap.to({val:0}, {val:target, duration:2.2, ease:'power2.out',
+            onUpdate:function(){ el.textContent = Math.round(this.targets()[0].val) + suffix; }
+          });
+        });
+      }
+    });
+  }
+
+  /* ── BESTSELLERS CARDS ── */
+  const bsCards = document.querySelectorAll('.bs-card');
+  if(bsCards.length){
+    gsap.from(bsCards, {
+      scrollTrigger:{trigger:document.getElementById('bsGrid'),start:'top 82%'},
+      y:80,opacity:0,rotateX:isMobile?0:12,scale:.94,duration:1,stagger:{amount:.4},ease:'back.out(1.5)'
+    });
+    if(!isMobile){
+      bsCards.forEach(function(card){
+        card.addEventListener('mousemove', function(e){
+          const rect = this.getBoundingClientRect();
+          const dx = (e.clientX - rect.left - rect.width/2) / rect.width;
+          const dy = (e.clientY - rect.top - rect.height/2) / rect.height;
+          gsap.to(this, {rotateY:dx*10,rotateX:-dy*6,translateY:-14,scale:1.02,duration:.4,ease:'power2.out',transformPerspective:600});
+        });
+        card.addEventListener('mouseleave', function(){
+          gsap.to(this, {rotateY:0,rotateX:0,translateY:0,scale:1,duration:.5,ease:'elastic.out(1,.7)',transformPerspective:600});
+        });
+        card.addEventListener('mouseenter', function(){
+          for(let i = 0; i < 8; i++){
+            const s = document.createElement('div'); s.className = 'sparkle-dot';
+            s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${4+Math.random()*5}px;height:${4+Math.random()*5}px;background:${Math.random()>.5?'var(--gold)':'var(--rose)'};`;
+            this.appendChild(s);
+            gsap.fromTo(s, {scale:0,opacity:1}, {scale:2,opacity:0,duration:.7,ease:'power2.out',onComplete:function(){ s.remove(); }});
+          }
+        });
+      });
+    }
+    if(isMobile){
+      bsCards.forEach(function(card){
+        card.addEventListener('touchstart', function(){ gsap.to(card,{scale:.97,duration:.12,ease:'power2.out'}); }, {passive:true});
+        card.addEventListener('touchend', function(){ gsap.to(card,{scale:1,duration:.4,ease:'elastic.out(1,.5)'}); }, {passive:true});
+      });
+    }
+  }
+
+  /* ── PROCESS STEPS ── */
+  const steps = document.querySelectorAll('.step');
+  if(steps.length){
+    gsap.from(steps, {
+      scrollTrigger:{trigger:document.getElementById('stepsGrid'),start:'top 80%'},
+      y:60,opacity:0,scale:.88,duration:.9,stagger:.18,ease:'back.out(2)'
+    });
+    steps.forEach(function(step, i){
+      const fill = step.querySelector('.step-progress-fill');
+      if(fill) gsap.to(fill, {width:fill.style.getPropertyValue('--target-w')||'75%',duration:1.2,delay:i*.18+.3,ease:'power2.inOut'});
+    });
+    steps.forEach(function(step){
+      const num = step.querySelector('.step-num');
+      step.addEventListener('mouseenter', function(){ gsap.to(num,{rotation:360,scale:1.2,duration:.6,ease:'back.out(2)'}); });
+      step.addEventListener('mouseleave', function(){ gsap.to(num,{rotation:0,scale:1,duration:.5,ease:'elastic.out(1,.7)'}); });
+    });
+  }
+
+  /* ── TESTIMONIALS — GSAP stagger ── */
+  const testiCards = document.querySelectorAll('.testi-card');
+  if(testiCards.length){
+    gsap.from(testiCards, {
+      scrollTrigger:{trigger:document.getElementById('testiGrid'),start:'top 82%'},
+      y:70,opacity:0,scale:.93,duration:1,stagger:.2,ease:'back.out(1.6)'
+    });
+  }
+
+  /* ── TESTI TITLE CHARACTER REVEAL ── */
+  const tTitle = document.getElementById('testiTitle');
+  if(tTitle && !isMobile){
+    const chars = tTitle.textContent.split('');
+    tTitle.innerHTML = chars.map(function(c){ return c === ' ' ? ' ' : `<span style="display:inline-block;">${c}</span>`; }).join('');
+    gsap.from(tTitle.querySelectorAll('span'), {
+      scrollTrigger:{trigger:tTitle,start:'top 85%'},
+      opacity:0,y:30,rotateY:-60,duration:.7,stagger:.04,ease:'back.out(2)'
+    });
+  }
+
+  /* ── CTA ── */
+  const ctaInner = document.getElementById('ctaInner');
+  if(ctaInner){
+    gsap.from(ctaInner, {
+      scrollTrigger:{trigger:ctaInner,start:'top 80%'},
+      scale:.85,opacity:0,duration:1.2,ease:'back.out(1.8)'
+    });
+  }
+
+  /* ── CTA TITLE SPLIT ── */
+  const ctaH = document.querySelector('.cta-inner h2');
+  if(ctaH && !isMobile){
+    const words = ctaH.textContent.split(' ');
+    ctaH.innerHTML = words.map(function(w){ return `<span style="display:inline-block;overflow:hidden;margin-right:.22em;"><span class="cta-word" style="display:inline-block;">${w}</span></span>`; }).join('');
+    gsap.from('.cta-word', {
+      scrollTrigger:{trigger:ctaH,start:'top 85%'},
+      y:'110%',opacity:0,rotateX:40,duration:.8,stagger:.07,ease:'back.out(1.5)'
+    });
+  }
+
+  /* ── FOOTER ── */
+  const ftop = document.getElementById('footerTop');
+  if(ftop){
+    gsap.from(ftop.children, {
+      scrollTrigger:{trigger:ftop,start:'top 90%'},
+      y:40,opacity:0,duration:.8,stagger:.1,ease:'power2.out'
+    });
+  }
+
+  /* ── WELCOME HEADING WORD REVEAL ── */
+  const wh = document.querySelector('#welcomeSection .welcome-text h2');
+  if(wh && !isMobile){
+    const words = wh.textContent.trim().split(' ');
+    wh.innerHTML = words.map(function(w){ return `<span style="overflow:hidden;display:inline-block;"><span class="gsap-word-inner" style="display:inline-block;">${w}</span></span>`; }).join(' ');
+    gsap.from('.gsap-word-inner', {
+      scrollTrigger:{trigger:wh,start:'top 85%'},
+      y:'100%',opacity:0,duration:.8,stagger:.06,ease:'power3.out'
+    });
+  }
+
+  /* ── EYEBROW ── */
+  document.querySelectorAll('.eyebrow').forEach(function(eb){
+    gsap.from(eb, {
+      scrollTrigger:{trigger:eb,start:'top 90%'},
+      opacity:0,x:-30,duration:.7,ease:'power2.out'
+    });
+  });
+
+  /* ── SECTION H2 ── */
+  document.querySelectorAll('.section-header-text h2, .process>h2, .testimonials h2').forEach(function(h){
+    gsap.from(h, {
+      scrollTrigger:{trigger:h,start:'top 88%'},
+      opacity:0,y:35,duration:.9,ease:'power3.out'
+    });
+  });
+
+  /* ── HERO BADGE PARALLAX ── */
+  const badge = document.getElementById('heroBadge');
+  if(badge){
+    gsap.to(badge, {
+      scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true},
+      y:80,ease:'none'
+    });
+  }
+
+  /* ── WAVE PARALLAX ── */
+  gsap.to('.wave-divider svg', {
+    scrollTrigger:{trigger:'.wave-divider',start:'top bottom',end:'bottom top',scrub:1},
+    x:'-5%',ease:'none'
+  });
+
+  /* ── FLOATING EMOJIS ── */
+  document.querySelectorAll('.ingredient-float').forEach(function(el, i){
+    gsap.fromTo(el,
+      {y:0,rotation:0,opacity:.06},
+      {y:-20,rotation:i%2===0?8:-8,opacity:.12,duration:3+i,repeat:-1,yoyo:true,ease:'sine.inOut',delay:i*.8}
+    );
+  });
+
+  /* ── STATS BAR ── */
+  gsap.from('#statsBar', {
+    scrollTrigger:{trigger:'#statsBar',start:'top 85%'},
+    scaleX:.96,opacity:0,duration:.8,ease:'power2.out'
+  });
+
+  /* ── WELCOME IMAGE PARALLAX ── */
+  gsap.to('#welcomeImages .wi:first-child img', {
+    scrollTrigger:{trigger:'#welcomeSection',start:'top bottom',end:'bottom top',scrub:1.5},
+    y:-40,ease:'none'
+  });
+
+  /* ── MAGNETIC BUTTONS (desktop) ── */
+  if(!isMobile){
+    document.querySelectorAll('.btn-primary,.btn-outline').forEach(function(btn){
+      btn.addEventListener('mousemove', function(e){
+        const rect = this.getBoundingClientRect();
+        const dx = (e.clientX - rect.left - rect.width/2) * .15;
+        const dy = (e.clientY - rect.top - rect.height/2) * .15;
+        gsap.to(this, {x:dx,y:dy-4,duration:.3,ease:'power2.out'});
+      });
+      btn.addEventListener('mouseleave', function(){
+        gsap.to(this, {x:0,y:0,duration:.5,ease:'elastic.out(1,.7)'});
+      });
+    });
+  }
+
+  /* ── MOBILE TOUCH FEEDBACK ── */
+  if(isMobile){
+    document.querySelectorAll('.testi-card,.info-card,.gallery-item').forEach(function(el){
+      el.addEventListener('touchstart', function(){ gsap.to(el,{scale:.97,duration:.12,ease:'power2.out'}); }, {passive:true});
+      el.addEventListener('touchend', function(){ gsap.to(el,{scale:1,duration:.45,ease:'elastic.out(1,.5)'}); }, {passive:true});
+    });
+    ham.addEventListener('click', function(){
+      if(navLinks.classList.contains('open')){
+        gsap.from(navLinks.querySelectorAll('li'), {x:-30,opacity:0,duration:.4,stagger:.06,ease:'power2.out',delay:.1});
+      }
+    });
+  }
+
+  /* ── SOCIAL BUTTONS BOUNCE ── */
+  document.querySelectorAll('.social-btn').forEach(function(btn){
+    btn.addEventListener('mouseenter', function(){ gsap.to(btn,{scale:1.25,rotation:12,duration:.3,ease:'back.out(3)'}); });
+    btn.addEventListener('mouseleave', function(){ gsap.to(btn,{scale:1,rotation:0,duration:.4,ease:'elastic.out(1,.5)'}); });
+  });
+
+  /* ── SCROLL PROGRESS BAR ── */
+  const prog = document.createElement('div');
+  prog.style.cssText = 'position:fixed;top:0;left:0;height:2px;background:linear-gradient(to right,var(--gold),var(--rose));z-index:999;width:0%;pointer-events:none;';
+  document.body.appendChild(prog);
+  gsap.to(prog, {
+    scrollTrigger:{trigger:document.body,start:'top top',end:'bottom bottom',scrub:0},
+    width:'100%',ease:'none'
+  });
+
+  /* ── ARROW BUTTONS ── */
+  document.querySelectorAll('.arrow-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ gsap.fromTo(btn,{scale:.85},{scale:1,duration:.4,ease:'elastic.out(2,.5)'}); });
+  });
+
+  /* ── ORNAMENT ── */
+  gsap.from('.ornament-icon', {
+    scrollTrigger:{trigger:'.ornament',start:'top 85%'},
+    rotation:-360,scale:0,duration:1,ease:'back.out(2)'
+  });
+  gsap.from('.ornament-line', {
+    scrollTrigger:{trigger:'.ornament',start:'top 85%'},
+    scaleX:0,duration:.8,stagger:.1,ease:'power2.out'
+  });
+
+  /* ── HERO BADGE ENTRANCE ── */
+  setTimeout(function(){
+    const hb = document.getElementById('heroBadge');
+    if(hb) gsap.from(hb, {scale:2.5,rotation:-15,opacity:0,duration:.8,ease:'back.out(2)',delay:.2});
+  }, 1800);
+
+  /* ── STEP PROGRESS BARS ── */
+  document.querySelectorAll('.step').forEach(function(step, i){
+    const fill = step.querySelector('.step-progress-fill');
+    if(!fill) return;
+    const targetW = fill.style.getPropertyValue('--target-w') || '75%';
+    ScrollTrigger.create({
+      trigger:step, start:'top 85%',
+      onEnter:function(){ gsap.to(fill,{width:targetW,duration:1.4,delay:i*.15,ease:'power2.inOut'}); }
+    });
+  });
+
+  /* ── LOGO HOVER ── */
+  document.querySelectorAll('.logo').forEach(function(logo){
+    logo.addEventListener('mouseenter', function(){ gsap.fromTo(logo,{scale:1},{scale:1.08,duration:.3,ease:'back.out(3)'}); });
+    logo.addEventListener('mouseleave', function(){ gsap.to(logo,{scale:1,duration:.4,ease:'elastic.out(1,.5)'}); });
+  });
+
+  /* ── PROCESS TITLE ── */
+  const pTitle = document.getElementById('processTitle');
+  if(pTitle){
+    gsap.from(pTitle, {scrollTrigger:{trigger:pTitle,start:'top 85%'},opacity:0,y:40,duration:1,ease:'power3.out'});
+  }
+
+} /* end initGSAP */
+</script>
+</body>
+</html>
