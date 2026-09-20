@@ -13,5 +13,5 @@ Pastry Chef is a modern and responsive bakery website designed to showcase baker
 ## Tech Stack
 - HTML
 - CSS
-- JavaScript
+- JavaScripts
 - GSAP
